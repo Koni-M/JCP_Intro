@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Introduction Question Wheel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: "Poppins", "Segoe UI", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 40px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .container {
+        max-width: 1200px;
+        width: 100%;
+    }
+    
+    h1 {
+        text-align: center;
+        color: white;
+        font-size: 3em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        letter-spacing: 2px;
+    }
+    
+    .subtitle {
+        text-align: center;
+        color: rgba(255,255,255,0.9);
+        font-size: 1.2em;
+        margin-bottom: 40px;
+    }
+    
+    .main-content {
+        display: flex;
+        gap: 40px;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .wheel-section {
+        flex: 1;
+        min-width: 350px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .pointer {
+        width: 0;
+        height: 0;
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-bottom: 35px solid #ffeb3b;
+        margin-bottom: 15px;
+        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+        animation: bounce 1s ease-in-out infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .wheel-container {
+        width: 350px;
+        height: 350px;
+        border-radius: 50%;
+        border: 12px solid #fff;
+        position: relative;
+        overflow: hidden;
+        transform: rotate(0deg);
+        transition: transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        background: conic-gradient(
+            #FF6B6B 0deg 72deg,
+            #4ECDC4 72deg 144deg,
+            #45B7D1 144deg 216deg,
+            #FFA07A 216deg 288deg,
+            #98D8C8 288deg 360deg
+        );
+        box-shadow: 
+            0 0 0 8px rgba(255,255,255,0.3),
+            0 10px 30px rgba(0,0,0,0.3),
+            inset 0 0 50px rgba(0,0,0,0.1);
+    }
+    
+    .wheel-container.spinning {
+        transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+    }
+    
+    .center-circle {
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        background: white;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+    
+    .controls {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+    
+    button {
+        padding: 15px 35px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        border-radius: 50px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    button:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+    
+    button:active:not(:disabled) {
+        transform: translateY(0);
+    }
+    
+    button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .results-section {
+        flex: 1;
+        min-width: 350px;
+    }
+    
+    .results {
+        background: white;
+        padding: 35px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        min-height: 400px;
+    }
+    
+    .results h2 {
+        margin-bottom: 25px;
+        color: #667eea;
+        font-size: 2em;
+        border-bottom: 3px solid #667eea;
+        padding-bottom: 15px;
+        text-align: center;
+    }
+    
+    #selected {
+        color: #666;
+        font-style: italic;
+    }
+    
+    .question {
+        margin: 20px 0;
+        font-size: 1.1em;
+        padding: 20px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 15px;
+        border-left: 5px solid #667eea;
+        color: #333;
+        font-weight: 500;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        animation: slideIn 0.5s ease-out;
+        transition: transform 0.2s ease;
+    }
+    
+    .question:hover {
+        transform: translateX(5px);
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    .question-number {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        background: #667eea;
+        color: white;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 30px;
+        margin-right: 10px;
+        font-weight: 700;
+    }
+    
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 2em;
+        }
+        
+        .main-content {
+            flex-direction: column;
+        }
+        
+        .wheel-container {
+            width: 280px;
+            height: 280px;
+        }
+        
+        .controls {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        button {
+            width: 100%;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>🎡 Introduction Question Wheel</h1>
+    <p class="subtitle">Say your <strong>name</strong> and <strong>degree</strong>, then spin for 3 questions</p>
+    
+    <div class="main-content">
+        <div class="wheel-section">
+            <div class="pointer"></div>
+            <div id="wheel" class="wheel-container">
+                <div class="center-circle">🎯</div>
+            </div>
+            <div class="controls">
+                <button id="spinBtn" onclick="spinWheel()">🎲 SPIN</button>
+                <button id="resetBtn" onclick="resetWheel()" disabled>🔄 RESET</button>
+            </div>
+        </div>
+        
+        <div class="results-section">
+            <div class="results">
+                <h2>📋 Your Questions</h2>
+                <div id="selected"><em>Click SPIN to get your questions!</em></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        "Where are you from/place of birth/origin",
+        "How many siblings do you have and where are you in the line",
+        "What motivated you to pursue this degree",
+        "Why is this degree important to you",
+        "Tell us a fun fact about you"
+    ];
+    
+    const wheel = document.getElementById("wheel");
+    const spinBtn = document.getElementById("spinBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    let currentRotation = 0;
+    
+    function spinWheel() {
+        spinBtn.disabled = true;
+        wheel.classList.add('spinning');
+        document.getElementById("selected").innerHTML = "<em>🎰 Spinning...</em>";
+        
+        // One big spin
+        const spins = 6 + Math.random() * 4; // 6-10 full rotations
+        const extraDegrees = Math.random() * 360;
+        const totalRotation = (spins * 360) + extraDegrees;
+        
+        currentRotation += totalRotation;
+        wheel.style.transform = `rotate(${currentRotation}deg)`;
+        
+        // After spin completes, select 3 random unique questions
+        setTimeout(() => {
+            wheel.classList.remove('spinning');
+            
+            // Shuffle and pick 3 unique questions
+            const shuffled = [...questions].sort(() => 0.5 - Math.random());
+            const selectedQuestions = shuffled.slice(0, 3);
+            
+            // Display with animation delay
+            let output = '';
+            selectedQuestions.forEach((q, i) => {
+                setTimeout(() => {
+                    output += `<div class="question" style="animation-delay: ${i * 0.2}s"><span class="question-number">${i + 1}</span>${q}</div>`;
+                    document.getElementById("selected").innerHTML = output;
+                }, i * 300);
+            });
+            
+            resetBtn.disabled = false;
+        }, 5000);
+    }
+    
+    function resetWheel() {
+        document.getElementById("selected").innerHTML = "<em>Click SPIN to get your questions!</em>";
+        spinBtn.disabled = false;
+        resetBtn.disabled = true;
+    }
+</script>
+</body>
+</html>
